@@ -9,6 +9,8 @@ import { Shop } from './pages/Shop';
 import { Locker } from './pages/Locker';
 import { Favorites } from './pages/Favorites';
 import { Profile } from './pages/Profile';
+import { Privacy } from './pages/Privacy';
+import { CookieBanner } from './components/GDPR/CookieBanner';
 
 function App() {
   return (
@@ -65,8 +67,17 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/privacy"
+            element={
+              <ProtectedRoute>
+                <Privacy />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <CookieBanner />
       </AuthProvider>
     </Router>
   );

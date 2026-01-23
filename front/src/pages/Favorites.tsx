@@ -47,32 +47,32 @@ export const Favorites = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-900 via-black to-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-900 flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-            <Star className="text-yellow-500" fill="currentColor" />
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-2">
+            <Star className="text-yellow-500" fill="currentColor" size={28} />
             Mes Favoris
           </h1>
-          <p className="text-gray-300">Suivez vos skins préférés et leurs probabilités d'apparition</p>
+          <p className="text-gray-400">Suivez vos skins préférés et leurs probabilités d'apparition</p>
         </div>
 
         {loading ? (
           <Loading message="Chargement de vos favoris..." />
         ) : favorites.length === 0 ? (
-          <div className="bg-black/50 backdrop-blur-lg rounded-xl border border-yellow-500/20 p-12 text-center">
-            <Star className="text-yellow-500/50 mx-auto mb-4" size={64} />
-            <h3 className="text-2xl font-semibold text-white mb-2">
-              Aucun favori pour le moment
+          <div className="bg-gray-800 rounded border border-gray-700 p-8 text-center">
+            <Star className="text-yellow-500 mx-auto mb-3" size={48} />
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Aucun favori
             </h3>
-            <p className="text-gray-400 mb-6">
-              Ajoutez des skins à vos favoris depuis la boutique pour les suivre ici
+            <p className="text-gray-400 mb-4">
+              Ajoutez des skins depuis la boutique pour les suivre ici
             </p>
             <a
               href="/shop"
-              className="inline-block px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg transition"
+              className="inline-block px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded"
             >
               Découvrir la boutique
             </a>

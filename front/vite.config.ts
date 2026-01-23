@@ -11,4 +11,26 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    target: 'esnext',
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 500,
+    cssCodeSplit: true,
+    sourcemap: false,
+  },
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
+  server: {
+    hmr: {
+      overlay: false,
+    },
+  },
 })

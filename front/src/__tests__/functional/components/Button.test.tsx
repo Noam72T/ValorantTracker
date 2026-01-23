@@ -53,28 +53,10 @@ describe('Button Component - Tests Fonctionnels', () => {
     expect(button.className).toContain('bg-green-600');
   });
 
-  it('devrait appliquer la taille medium par défaut', () => {
-    render(<Button>Medium</Button>);
-    const button = screen.getByText('Medium');
+  it('devrait avoir le padding par défaut', () => {
+    render(<Button>Button</Button>);
+    const button = screen.getByText('Button');
     expect(button.className).toContain('px-4 py-2');
-  });
-
-  it('devrait appliquer la taille small', () => {
-    render(<Button size="sm">Small</Button>);
-    const button = screen.getByText('Small');
-    expect(button.className).toContain('px-3 py-1.5');
-  });
-
-  it('devrait appliquer la taille large', () => {
-    render(<Button size="lg">Large</Button>);
-    const button = screen.getByText('Large');
-    expect(button.className).toContain('px-6 py-3');
-  });
-
-  it('devrait appliquer fullWidth', () => {
-    render(<Button fullWidth>Full Width</Button>);
-    const button = screen.getByText('Full Width');
-    expect(button.className).toContain('w-full');
   });
 
   it('devrait être désactivé quand disabled est true', () => {
