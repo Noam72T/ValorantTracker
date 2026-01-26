@@ -7,6 +7,7 @@ const shopRoutes = require('./shopRoutes');
 const favoriteRoutes = require('./favoriteRoutes');
 const skinRoutes = require('./skinRoutes');
 const skinSyncRoutes = require('./skinSyncRoutes');
+const gdprRoutes = require('./gdprRoutes');
 
 router.use('/auth', authRoutes);
 router.use('/valorant', valorantRoutes);
@@ -15,5 +16,6 @@ router.use('/shop', shopRoutes);
 router.use('/favorites', favoriteRoutes);
 router.use('/skins', skinRoutes);
 router.use('/skin-sync', skinSyncRoutes);
+router.use('/gdpr', gdprRoutes);
 
 module.exports = router;

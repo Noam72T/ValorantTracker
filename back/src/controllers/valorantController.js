@@ -70,19 +70,31 @@ const getMatchHistory = async (req, res, next) => {
 
     const { name, tag } = valorantService.parseRiotId(user.riotId);
     const region = valorantService.determineRegion(user.riotId);
-    const { mode = 'competitive', size = 10 } = req.query;
+    const { size = 20 } = req.query;
 
-    const matches = await valorantService.getMatchHistory(region, name, tag, mode, parseInt(size)).catch(err => ({ data: [] }));
+    const modes = ['competitive', 'unrated', 'deathmatch', 'spikerush', 'escalation'];
+    let allMatches = [];
 
-    if (matches.data && matches.data.length > 0) {
-      for (const match of matches.data) {
+    for (const mode of modes) {
+      try {
+        const matches = await valorantService.getMatchHistory(region, name, tag, mode, 10);
+        if (matches.data && matches.data.length > 0) {
+          allMatches = allMatches.concat(matches.data);
+        }
+      } catch (error) {
+        console.log(`Pas de matchs ${mode} trouvés`);
+      }
+    }
+
+    if (allMatches.length > 0) {
+      for (const match of allMatches) {
         const playerStats = match.players.all_players.find(
           p => p.name === name && p.tag === tag
         );
 
         if (playerStats) {
           const matchDate = match.metadata.game_start 
-            ? new Date(match.metadata.game_start * 1000) // Convertir timestamp Unix en millisecondes
+            ? new Date(match.metadata.game_start * 1000)
             : new Date();
 
           const matchData = {
@@ -102,7 +114,6 @@ const getMatchHistory = async (req, res, next) => {
             metadata: match
           };
 
-          // Utiliser upsert pour créer ou mettre à jour
           await Match.upsert(matchData);
         }
       }
@@ -110,7 +121,8 @@ const getMatchHistory = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: matches.data
+      data: allMatches,
+      message: `${allMatches.length} matchs récupérés`
     });
   } catch (error) {
     res.status(500).json({

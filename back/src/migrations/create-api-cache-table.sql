@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS api_cache (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  "cacheKey" VARCHAR(255) NOT NULL UNIQUE,
+  endpoint VARCHAR(255) NOT NULL,
+  data JSONB NOT NULL,
+  "expiresAt" TIMESTAMP WITH TIME ZONE NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_api_cache_key ON api_cache("cacheKey");
+CREATE INDEX IF NOT EXISTS idx_api_cache_expires ON api_cache("expiresAt");

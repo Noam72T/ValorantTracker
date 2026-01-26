@@ -50,10 +50,34 @@ const User = sequelize.define('User', {
   favoritesSkins: {
     type: DataTypes.ARRAY(DataTypes.STRING),
     defaultValue: []
+  },
+  consentGiven: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false
+  },
+  consentDate: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  dataProcessingConsent: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false
+  },
+  marketingConsent: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false
+  },
+  deletionRequestedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 }, {
   tableName: 'users',
   timestamps: true,
+  paranoid: true,
   hooks: {
     beforeCreate: async (user) => {
       if (user.password) {

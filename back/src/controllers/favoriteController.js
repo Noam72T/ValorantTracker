@@ -1,5 +1,4 @@
 const { Favorite, Skin } = require('../models');
-const probabilityService = require('../services/probabilityService');
 
 const getFavorites = async (req, res, next) => {
   try {
@@ -12,26 +11,9 @@ const getFavorites = async (req, res, next) => {
       order: [['createdAt', 'DESC']]
     });
 
-    const favoritesWithProbability = await Promise.all(
-      favorites.map(async (fav) => {
-        try {
-          const probability = await probabilityService.calculateProbability(fav.skinId);
-          return {
-            ...fav.toJSON(),
-            probability
-          };
-        } catch (error) {
-          return {
-            ...fav.toJSON(),
-            probability: null
-          };
-        }
-      })
-    );
-
     res.status(200).json({
       success: true,
-      data: favoritesWithProbability
+      data: favorites
     });
   } catch (error) {
     next(error);

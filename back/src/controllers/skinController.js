@@ -1,5 +1,4 @@
 const { Skin } = require('../models');
-const probabilityService = require('../services/probabilityService');
 const { Op } = require('sequelize');
 
 const getAllSkins = async (req, res, next) => {
@@ -61,36 +60,6 @@ const getSkinById = async (req, res, next) => {
   }
 };
 
-const getProbabilities = async (req, res, next) => {
-  try {
-    const { limit = 10 } = req.query;
-
-    const probabilities = await probabilityService.getTopProbabilities(parseInt(limit));
-
-    res.status(200).json({
-      success: true,
-      data: probabilities
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getSkinProbability = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    const probability = await probabilityService.calculateProbability(id);
-
-    res.status(200).json({
-      success: true,
-      data: probability
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 const createSkin = async (req, res, next) => {
   try {
     const {
@@ -142,7 +111,5 @@ const createSkin = async (req, res, next) => {
 module.exports = {
   getAllSkins,
   getSkinById,
-  getProbabilities,
-  getSkinProbability,
   createSkin
 };
