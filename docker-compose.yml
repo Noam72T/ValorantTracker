@@ -4,7 +4,7 @@ services:
   back:
     build: ./back
     ports:
-      - "5000:5000"
+      - "${BACKEND_PORT:-8080}:5000"
     volumes:
       - ./back:/app
       - /app/node_modules
@@ -12,7 +12,7 @@ services:
   front:
     build: ./front
     ports:
-      - "5173:5173"
+      - "${FRONTEND_PORT:-5173}:80"
     volumes:
       - ./front:/app
       - /app/node_modules
