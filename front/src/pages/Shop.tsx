@@ -38,7 +38,7 @@ export const Shop = () => {
 
       setSkins(skinsData.skins);
       setProbabilities(probsData);
-      setFavorites(new Set(favsData.map(f => f.skinId)));
+      setFavorites(new Set(favsData.map((f: any) => f.skinId)));
     } catch (error) {
       console.error('Erreur chargement boutique:', error);
     } finally {
@@ -50,7 +50,7 @@ export const Shop = () => {
     try {
       if (favorites.has(skinId)) {
         const fav = await favoriteService.getFavorites();
-        const favToRemove = fav.find(f => f.skinId === skinId);
+        const favToRemove = fav.find((f: any) => f.skinId === skinId);
         if (favToRemove) {
           await favoriteService.removeFavorite(favToRemove.id);
           setFavorites(prev => {
@@ -74,10 +74,10 @@ export const Shop = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-900 via-black to-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-900 flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Boutique Valorant</h1>
           <p className="text-gray-300">Découvrez les skins et leurs probabilités d'apparition</p>

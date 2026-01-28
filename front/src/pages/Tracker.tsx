@@ -17,7 +17,7 @@ export const Tracker = () => {
   const [stats, setStats] = useState<any>(null);
   const [error, setError] = useState('');
   const [selectedMode, setSelectedMode] = useState<string>('all');
-  const [matchSize, setMatchSize] = useState<number>(20);
+  const [matchSize, setMatchSize] = useState<number>(10);
 
   const fetchData = async () => {
     if (!user?.riotId) {
@@ -29,18 +29,20 @@ export const Tracker = () => {
       setError('');
       const [playerStats, storedMatches] = await Promise.all([
         valorantService.getPlayerStats(),
-        valorantService.getStoredMatches(matchSize, 0)
+        valorantService.getStoredMatches(50, 0)
       ]);
 
       setStats(playerStats);
       
-      // Filtrer les matchs par mode si nécessaire
-      let filteredMatches = storedMatches.matches;
+      let filteredMatches = storedMatches.matches || [];
+      
       if (selectedMode !== 'all') {
-        filteredMatches = storedMatches.matches.filter(
+        filteredMatches = filteredMatches.filter(
           (match: Match) => match.gameMode.toLowerCase() === selectedMode.toLowerCase()
         );
       }
+      
+      filteredMatches = filteredMatches.slice(0, matchSize);
       
       setMatches(filteredMatches);
     } catch (err: any) {
@@ -54,9 +56,7 @@ export const Tracker = () => {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      // Récupérer les matchs selon le mode sélectionné
-      const mode = selectedMode === 'all' ? 'competitive' : selectedMode;
-      await valorantService.getMatchHistory(mode, matchSize);
+      await valorantService.getMatchHistory('all', 50);
       await fetchData();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erreur lors de la mise à jour');
@@ -84,39 +84,39 @@ export const Tracker = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-900 via-black to-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-900 flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold text-white mb-1">
                 Tracker Valorant
               </h1>
               <p className="text-gray-400">Vos statistiques et historique de matchs</p>
             </div>
 
             {user?.riotId && (
-              <Button
+              <button
                 onClick={handleRefresh}
                 disabled={refreshing}
-                className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg shadow-red-500/20"
+                className="flex items-center gap-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white px-4 py-2 rounded"
               >
-                <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
+                <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
                 {refreshing ? 'Mise à jour...' : 'Actualiser'}
-              </Button>
+              </button>
             )}
           </div>
 
           {user?.riotId && (
-            <div className="flex flex-wrap gap-3 items-center bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl border border-gray-700/50 p-5">
-              <div className="flex items-center gap-3">
-                <label className="text-gray-400 text-sm font-medium">Mode de jeu</label>
+            <div className="flex flex-wrap gap-3 items-center bg-gray-800 rounded border border-gray-700 p-4">
+              <div className="flex items-center gap-2">
+                <label className="text-gray-400 text-sm">Mode de jeu</label>
                 <select
                   value={selectedMode}
                   onChange={(e) => setSelectedMode(e.target.value)}
-                  className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-red-500 transition-colors"
+                  className="px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
                 >
                   <option value="all">Tous les modes</option>
                   <option value="competitive">Compétitif</option>
@@ -129,12 +129,12 @@ export const Tracker = () => {
                 </select>
               </div>
 
-              <div className="flex items-center gap-3">
-                <label className="text-gray-400 text-sm font-medium">Nombre de matchs</label>
+              <div className="flex items-center gap-2">
+                <label className="text-gray-400 text-sm">Nombre de matchs</label>
                 <select
                   value={matchSize}
                   onChange={(e) => setMatchSize(Number(e.target.value))}
-                  className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-red-500 transition-colors"
+                  className="px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
                 >
                   <option value={10}>10 matchs</option>
                   <option value={20}>20 matchs</option>
@@ -143,9 +143,9 @@ export const Tracker = () => {
                 </select>
               </div>
 
-              <div className="ml-auto bg-gray-800/50 px-4 py-2 rounded-xl border border-gray-700/50">
+              <div className="ml-auto bg-gray-700 px-3 py-2 rounded border border-gray-600">
                 <span className="text-gray-400 text-sm">
-                  <span className="text-white font-bold">{matches.length}</span> match{matches.length > 1 ? 's' : ''} affiché{matches.length > 1 ? 's' : ''}
+                  <span className="text-white font-bold">{matches.length}</span> match{matches.length > 1 ? 's' : ''}
                 </span>
               </div>
             </div>
@@ -153,29 +153,29 @@ export const Tracker = () => {
         </div>
 
         {!user?.riotId ? (
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-8 text-center">
-            <AlertCircle className="text-yellow-500 mx-auto mb-4" size={48} />
-            <h3 className="text-2xl font-semibold text-yellow-500 mb-2">
+          <div className="bg-yellow-900 border border-yellow-700 rounded p-6 text-center">
+            <AlertCircle className="text-yellow-500 mx-auto mb-3" size={40} />
+            <h3 className="text-xl font-semibold text-yellow-400 mb-2">
               Riot ID non configuré
             </h3>
-            <p className="text-gray-300 mb-6">
-              Veuillez ajouter votre Riot ID dans votre profil pour accéder au tracker.
+            <p className="text-gray-300 mb-4">
+              Ajoutez votre Riot ID dans votre profil pour accéder au tracker.
             </p>
-            <Button onClick={() => window.location.href = '/profile'}>
+            <button onClick={() => window.location.href = '/profile'} className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded">
               Configurer mon Riot ID
-            </Button>
+            </button>
           </div>
         ) : loading ? (
           <Loading message="Chargement de vos statistiques..." />
         ) : error ? (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6">
-            <p className="text-red-500">{error}</p>
+          <div className="bg-red-900 border border-red-600 rounded p-4">
+            <p className="text-red-400">{error}</p>
           </div>
         ) : (
           <>
             {stats && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-black/50 backdrop-blur-lg p-6 rounded-xl border border-red-500/20">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-gray-800 p-4 rounded border border-gray-700">
                   <div className="flex items-center gap-3 mb-4">
                     <div>
                       <h3 className="text-gray-400 text-sm">Rang Actuel</h3>

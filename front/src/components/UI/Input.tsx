@@ -7,16 +7,16 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = ({ label, error, className = '', ...props }: InputProps) => {
   return (
-    <div className="w-full">
+    <div className="w-full mb-4">
       {label && (
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm text-gray-300 mb-1">
           {label}
         </label>
       )}
       <input
-        className={`w-full px-4 py-3 bg-gray-900/50 border ${
-          error ? 'border-red-500' : 'border-gray-700'
-        } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition ${className}`}
+        className={`w-full px-3 py-2 bg-gray-800 border ${
+          error ? 'border-red-500' : 'border-gray-600'
+        } rounded text-white ${className}`}
         {...props}
       />
       {error && (

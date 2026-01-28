@@ -19,21 +19,21 @@ export interface Favorite {
 }
 
 export const favoriteService = {
-  async getFavorites(): Promise<Favorite[]> {
+  async getFavorites() {
     const response = await api.get('/favorites');
     return response.data.data;
   },
 
-  async addFavorite(skinId: string, notificationEnabled = true): Promise<Favorite> {
-    const response = await api.post('/favorites', { skinId, notificationEnabled });
+  async addFavorite(skinId: string) {
+    const response = await api.post('/favorites', { skinId, notificationEnabled: true });
     return response.data.data;
   },
 
-  async removeFavorite(id: string): Promise<void> {
+  async removeFavorite(id: string) {
     await api.delete(`/favorites/${id}`);
   },
 
-  async updateFavorite(id: string, notificationEnabled: boolean): Promise<Favorite> {
+  async updateFavorite(id: string, notificationEnabled: boolean) {
     const response = await api.put(`/favorites/${id}`, { notificationEnabled });
     return response.data.data;
   }
