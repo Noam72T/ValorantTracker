@@ -21,6 +21,7 @@ export interface Match {
   rankBefore?: string;
   rankAfter?: string;
   rrChange?: number;
+  metadata?: any;
 }
 
 export const valorantService = {
