@@ -16,13 +16,13 @@ WORKDIR /app
 FROM base AS dev
 
 # Copier les fichiers de dépendances
-COPY backend/package*.json ./
+COPY back/package*.json ./
 
 # Installer toutes les dépendances (y compris dev)
 RUN npm ci
 
 # Copier le code source
-COPY backend/ .
+COPY back/ .
 
 # Variables d'environnement par défaut (à surcharger via .env ou docker-compose)
 ENV NODE_ENV=development
@@ -43,13 +43,13 @@ ENV NODE_ENV=production
 ENV PORT=3000
 
 # Copier les fichiers de dépendances
-COPY backend/package*.json ./
+COPY back/package*.json ./
 
 # Installer uniquement les dépendances de production
 RUN npm ci --only=production --ignore-scripts
 
 # Copier le code source
-COPY backend/ .
+COPY back/ .
 
 # Créer un utilisateur non-root pour la sécurité
 RUN addgroup -g 1001 -S nodejs && \
