@@ -44,7 +44,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-votre_secret_jwt_super_securise_changez_moi_en_production}
       JWT_EXPIRE: ${JWT_EXPIRE:-7d}
       VALORANT_API_KEY: ${VALORANT_API_KEY}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5011}
     volumes:
       - ./back:/app
       - /app/node_modules
@@ -71,7 +71,7 @@ services:
       - ./front:/app
       - /app/node_modules
     ports:
-      - "${FRONTEND_PORT:-5173}:5173"
+      - "${FRONTEND_PORT:-5011}:5011"
     networks:
       - app_valoranttrackers_prod
     restart: unless-stopped
