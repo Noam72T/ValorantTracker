@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Match } from '../../services/valorantService';
 import { getAgentImage, getMapImage } from '../../utils/valorantAssets';
+import { getRankIcon } from '../../utils/rankIcons';
 import { ChevronDown, ChevronUp, Users } from 'lucide-react';
 
 interface CardMatchProps {
@@ -155,9 +156,12 @@ export const CardMatch = ({ match }: CardMatchProps) => {
                               </div>
                             </div>
                             {player.currenttier_patched && (
-                              <span className="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">
-                                {player.currenttier_patched}
-                              </span>
+                              <img 
+                                src={getRankIcon(player.currenttier_patched)} 
+                                alt={player.currenttier_patched}
+                                className="w-8 h-8 object-contain"
+                                title={player.currenttier_patched}
+                              />
                             )}
                           </div>
                           <div className="grid grid-cols-4 gap-2 text-xs">
@@ -213,9 +217,12 @@ export const CardMatch = ({ match }: CardMatchProps) => {
                               </div>
                             </div>
                             {player.currenttier_patched && (
-                              <span className="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">
-                                {player.currenttier_patched}
-                              </span>
+                              <img 
+                                src={getRankIcon(player.currenttier_patched)} 
+                                alt={player.currenttier_patched}
+                                className="w-8 h-8 object-contain"
+                                title={player.currenttier_patched}
+                              />
                             )}
                           </div>
                           <div className="grid grid-cols-4 gap-2 text-xs">
