@@ -26,7 +26,7 @@ RUN npm install
 COPY . .
 
 # Argument de build pour l'API URL (pour la prod)
-ARG VITE_API_BASE_URL=http://localhost:3000
+ARG VITE_API_BASE_URL=http://localhost:5000
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 
 # Build de production
