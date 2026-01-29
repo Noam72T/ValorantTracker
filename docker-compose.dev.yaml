@@ -63,6 +63,7 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
+      target: dev
     container_name: ${PROJECT_NAME:-valorant}_frontend_dev
     depends_on:
       - backend
