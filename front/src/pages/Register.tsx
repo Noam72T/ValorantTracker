@@ -39,36 +39,36 @@ export const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-900 via-black to-gray-900">
-      <div className="bg-black/50 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md border border-red-500/20">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Valorant Tracker</h1>
-          <p className="text-gray-400">Créez votre compte</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="bg-gray-800 p-8 rounded w-full max-w-md border border-gray-700">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-white mb-2">Inscription</h1>
+          <p className="text-gray-400">Valorant Tracker</p>
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-red-900 border border-red-600 text-red-400 px-4 py-2 rounded mb-4">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
-              Nom d'utilisateur (optionnel)
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-sm text-gray-300 mb-1">
+              Pseudo (optionnel)
             </label>
             <input
               id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
               placeholder="Votre pseudo"
             />
           </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
               Email
             </label>
             <input
@@ -77,13 +77,13 @@ export const Register = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
               placeholder="votre@email.com"
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
               Mot de passe
             </label>
             <input
@@ -93,13 +93,13 @@ export const Register = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
               placeholder="••••••••"
             />
           </div>
 
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+          <div className="mb-4">
+            <label htmlFor="confirmPassword" className="block text-sm text-gray-300 mb-1">
               Confirmer le mot de passe
             </label>
             <input
@@ -109,7 +109,7 @@ export const Register = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
               placeholder="••••••••"
             />
           </div>
@@ -117,16 +117,16 @@ export const Register = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white font-semibold py-3 rounded-lg transition duration-200 transform hover:scale-[1.02] disabled:transform-none disabled:cursor-not-allowed"
+            className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white py-2 rounded disabled:cursor-not-allowed mt-2"
           >
             {isLoading ? 'Inscription...' : 'S\'inscrire'}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-4 text-center">
           <p className="text-gray-400">
             Déjà un compte ?{' '}
-            <Link to="/login" className="text-red-500 hover:text-red-400 font-medium transition">
+            <Link to="/login" className="text-red-500 hover:text-red-400">
               Se connecter
             </Link>
           </p>

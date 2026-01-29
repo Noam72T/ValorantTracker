@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  # ============================================
+  # PostgreSQL pour développement
+  # ============================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: ${PROJECT_NAME:-valorant}_postgres_dev
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-valorant_tracker}
+      POSTGRES_USER: ${POSTGRES_USER:-valorant_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ValorantTracker2024!}
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - app_network_dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-valorant_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ============================================
+  # Backend Express (dev avec hot-reload)
+  # ============================================
+  backend:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: ${PROJECT_NAME:-valorant}_backend_dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-valorant_tracker}
+      DB_USER: ${POSTGRES_USER:-valorant_user}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-ValorantTracker2024!}
+      JWT_SECRET: ${JWT_SECRET:-votre_secret_jwt_super_securise_changez_moi_en_production}
+      JWT_EXPIRE: ${JWT_EXPIRE:-7d}
+      VALORANT_API_KEY: ${VALORANT_API_KEY}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+    volumes:
+      - ./back:/app
+      - /app/node_modules
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
+    networks:
+      - app_network_dev
+    restart: unless-stopped
+
+  # ============================================
+  # Frontend React (dev avec hot-reload)
+  # ============================================
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: ${PROJECT_NAME:-valorant}_frontend_dev
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:5000}
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:5000}
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    networks:
+      - app_network_dev
+    restart: unless-stopped
+
+volumes:
+  postgres_data_dev:
+
+networks:
+  app_network_dev:
+    driver: bridge

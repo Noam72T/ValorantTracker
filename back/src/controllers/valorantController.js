@@ -107,7 +107,7 @@ const getMatchHistory = async (req, res, next) => {
             deaths: playerStats.stats.deaths,
             assists: playerStats.stats.assists,
             score: playerStats.stats.score,
-            won: playerStats.team === match.teams.red.has_won ? match.teams.red.has_won : match.teams.blue.has_won,
+            won: playerStats.team === 'Red' ? match.teams.red.has_won : match.teams.blue.has_won,
             roundsWon: playerStats.team === 'Red' ? match.teams.red.rounds_won : match.teams.blue.rounds_won,
             roundsLost: playerStats.team === 'Red' ? match.teams.red.rounds_lost : match.teams.blue.rounds_lost,
             matchDate: matchDate,

@@ -1,184 +1,187 @@
 import { useState, useEffect } from 'react';
 import { Header } from '../components/Layout/Header';
 import { Footer } from '../components/Layout/Footer';
-import { Loading } from '../components/UI/Loading';
-import { Button } from '../components/UI/Button';
-import { Input } from '../components/UI/Input';
-import { CardSkin } from '../components/Cards/CardSkin';
-import { skinService, type Probability } from '../services/skinService';
-import { favoriteService } from '../services/favoriteService';
-import type { Skin } from '../services/shopService';
-import { Search, TrendingUp, Filter } from 'lucide-react';
+import { getDailySkinsFromAPI, getTimeUntilReset, type ValorantSkin } from '../services/valorantSkinsService';
+import { Clock, ShoppingCart } from 'lucide-react';
 
 export const Shop = () => {
+  const [dailySkins, setDailySkins] = useState<ValorantSkin[]>([]);
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [selectedSkin, setSelectedSkin] = useState<ValorantSkin | null>(null);
   const [loading, setLoading] = useState(true);
-  const [skins, setSkins] = useState<Skin[]>([]);
-  const [probabilities, setProbabilities] = useState<Probability[]>([]);
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [search, setSearch] = useState('');
-  const [selectedRarity, setSelectedRarity] = useState('');
-  const [showProbabilities, setShowProbabilities] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, [search, selectedRarity]);
-
-  const fetchData = async () => {
-    try {
+    const loadSkins = async () => {
       setLoading(true);
-      const [skinsData, probsData, favsData] = await Promise.all([
-        skinService.getAllSkins({
-          limit: 50,
-          search: search || undefined,
-          rarity: selectedRarity || undefined
-        }),
-        skinService.getProbabilities(20),
-        favoriteService.getFavorites().catch(() => [])
-      ]);
-
-      setSkins(skinsData.skins);
-      setProbabilities(probsData);
-      setFavorites(new Set(favsData.map(f => f.skinId)));
-    } catch (error) {
-      console.error('Erreur chargement boutique:', error);
-    } finally {
+      const skins = await getDailySkinsFromAPI();
+      setDailySkins(skins);
       setLoading(false);
-    }
+    };
+
+    loadSkins();
+
+    const interval = setInterval(() => {
+      setTimeLeft(getTimeUntilReset());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const getRarityColor = () => {
+    return 'from-red-500 to-red-600';
   };
 
-  const handleToggleFavorite = async (skinId: string) => {
-    try {
-      if (favorites.has(skinId)) {
-        const fav = await favoriteService.getFavorites();
-        const favToRemove = fav.find(f => f.skinId === skinId);
-        if (favToRemove) {
-          await favoriteService.removeFavorite(favToRemove.id);
-          setFavorites(prev => {
-            const newSet = new Set(prev);
-            newSet.delete(skinId);
-            return newSet;
-          });
-        }
-      } else {
-        await favoriteService.addFavorite(skinId);
-        setFavorites(prev => new Set(prev).add(skinId));
-      }
-    } catch (error) {
-      console.error('Erreur favori:', error);
-    }
-  };
-
-  const getProbabilityForSkin = (skinId: string) => {
-    const prob = probabilities.find(p => p.skinId === skinId);
-    return prob?.probabilityScore;
+  const getRarityBorderColor = () => {
+    return 'border-red-500/50';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-900 via-black to-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-900 flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Boutique Valorant</h1>
-          <p className="text-gray-300">Découvrez les skins et leurs probabilités d'apparition</p>
-          <div className="mt-4 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                <ShoppingCart className="text-red-500" size={40} />
+                Boutique Quotidienne
+              </h1>
+              <p className="text-gray-300">Découvrez les skins du jour - Rotation quotidienne</p>
+            </div>
+
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="text-red-500" size={20} />
+                <span className="text-gray-300 text-sm font-semibold">Temps restant</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="bg-gray-900 rounded-lg px-3 py-2 min-w-[60px] text-center">
+                  <p className="text-2xl font-bold text-white">{String(timeLeft.hours).padStart(2, '0')}</p>
+                  <p className="text-xs text-gray-400">heures</p>
+                </div>
+                <span className="text-white text-2xl">:</span>
+                <div className="bg-gray-900 rounded-lg px-3 py-2 min-w-[60px] text-center">
+                  <p className="text-2xl font-bold text-white">{String(timeLeft.minutes).padStart(2, '0')}</p>
+                  <p className="text-xs text-gray-400">min</p>
+                </div>
+                <span className="text-white text-2xl">:</span>
+                <div className="bg-gray-900 rounded-lg px-3 py-2 min-w-[60px] text-center">
+                  <p className="text-2xl font-bold text-white">{String(timeLeft.seconds).padStart(2, '0')}</p>
+                  <p className="text-xs text-gray-400">sec</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
             <p className="text-blue-300 text-sm">
-              💡 <strong>Note :</strong> La boutique personnelle n'est pas accessible via l'API publique. 
-              Vous pouvez consulter les skins disponibles, leurs probabilités d'apparition et ajouter vos favoris pour suivre quand ils apparaîtront en jeu.
+              💡 <strong>Note :</strong> Ceci est une simulation de la boutique Valorant. 
+              Les skins changent automatiquement chaque jour à minuit. Les prix sont en Valorant Points (VP).
             </p>
           </div>
         </div>
 
-        <div className="bg-black/50 backdrop-blur-lg rounded-xl border border-purple-500/20 p-6 mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-            <TrendingUp className="text-purple-500" />
-            Top Probabilités
-          </h2>
+        <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+          <h2 className="text-2xl font-bold text-white mb-6">Skins Disponibles Aujourd'hui</h2>
+          
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-white text-lg">Chargement des skins...</div>
+            </div>
+          ) : dailySkins.length === 0 ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-gray-400 text-lg">Aucun skin disponible</div>
+            </div>
+          ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {dailySkins.map((skin, index) => (
+              <div
+                key={skin.uuid}
+                className={`group relative bg-gray-900 rounded-xl border-2 ${getRarityBorderColor()} overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer`}
+                onClick={() => setSelectedSkin(skin)}
+              >
+                <div className={`absolute top-3 right-3 px-3 py-1 rounded-full bg-gradient-to-r ${getRarityColor()} text-white text-xs font-bold z-10`}>
+                  Skin #{index + 1}
+                </div>
 
-          {probabilities.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {probabilities.slice(0, 6).map((prob) => (
-                <div
-                  key={prob.skinId}
-                  className="bg-gray-900/50 rounded-lg p-4 border border-purple-500/20"
-                >
-                  <h3 className="text-white font-semibold mb-2">{prob.skinName}</h3>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-400 text-sm">Probabilité</span>
-                    <span className="text-green-500 font-bold text-lg">{prob.probabilityScore}%</span>
-                  </div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-400 text-sm">Dernière apparition</span>
-                    <span className="text-gray-300 text-sm">{prob.daysSinceLastAppearance}j</span>
-                  </div>
-                  <div className="mt-2 pt-2 border-t border-gray-700">
-                    <span className="text-xs text-gray-500">Estimation: {prob.estimatedNextAppearance}</span>
+                <div className="relative h-48 bg-gray-800 flex items-center justify-center p-4">
+                  <img 
+                    src={skin.displayIcon} 
+                    alt={skin.displayName}
+                    className="relative w-full h-full object-contain drop-shadow-lg group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+
+                <div className="p-4">
+                  <h3 className="text-white font-bold text-lg mb-1 truncate">{skin.displayName}</h3>
+                  <p className="text-gray-400 text-sm mb-3">Skin Valorant</p>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="bg-gray-800 rounded px-3 py-1.5">
+                      <p className="text-yellow-400 font-bold text-lg">1775 VP</p>
+                    </div>
+                    <button className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-1.5 rounded font-semibold text-sm transition-all">
+                      Acheter
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-400">Aucune donnée de probabilité disponible</p>
-          )}
-        </div>
 
-        <div className="bg-black/50 backdrop-blur-lg rounded-xl border border-red-500/20 p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1">
-              <Input
-                type="text"
-                placeholder="Rechercher un skin..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full"
-              />
-            </div>
-
-            <select
-              value={selectedRarity}
-              onChange={(e) => setSelectedRarity(e.target.value)}
-              className="px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500"
-            >
-              <option value="">Toutes les raretés</option>
-              <option value="Exclusive">Exclusive</option>
-              <option value="Ultra">Ultra</option>
-              <option value="Premium">Premium</option>
-              <option value="Deluxe">Deluxe</option>
-              <option value="Select">Select</option>
-            </select>
-
-            <Button
-              onClick={() => setShowProbabilities(!showProbabilities)}
-              variant="secondary"
-              className="flex items-center gap-2"
-            >
-              <Filter size={18} />
-              {showProbabilities ? 'Masquer' : 'Afficher'} probabilités
-            </Button>
+                <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/20 rounded-xl transition-all pointer-events-none"></div>
+              </div>
+            ))}
           </div>
-
-          {loading ? (
-            <Loading message="Chargement des skins..." />
-          ) : skins.length === 0 ? (
-            <div className="text-center py-12">
-              <Search className="text-gray-600 mx-auto mb-4" size={48} />
-              <p className="text-gray-400">Aucun skin trouvé</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {skins.map((skin) => (
-                <CardSkin
-                  key={skin.id}
-                  skin={skin}
-                  onFavorite={() => handleToggleFavorite(skin.id)}
-                  isFavorite={favorites.has(skin.id)}
-                  showProbability={showProbabilities}
-                  probability={getProbabilityForSkin(skin.id)}
-                />
-              ))}
-            </div>
           )}
         </div>
+
+        {selectedSkin && (
+          <div 
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedSkin(null)}
+          >
+            <div 
+              className="bg-gray-900 rounded-2xl border-2 border-gray-700 max-w-2xl w-full p-8 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setSelectedSkin(null)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
+              >
+                ✕
+              </button>
+
+              <div className={`inline-block px-4 py-1 rounded-full bg-gradient-to-r ${getRarityColor()} text-white text-sm font-bold mb-4`}>
+                Skin Valorant
+              </div>
+
+              <h2 className="text-3xl font-bold text-white mb-4">{selectedSkin.displayName}</h2>
+              
+              <div className="bg-gray-800 rounded-xl p-6 mb-6">
+                <img 
+                  src={selectedSkin.displayIcon} 
+                  alt={selectedSkin.displayName}
+                  className="w-full h-64 object-contain"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 mb-6">
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <p className="text-gray-400 text-sm mb-1">Nom du skin</p>
+                  <p className="text-white font-bold">{selectedSkin.displayName}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="bg-gray-800 rounded-lg px-6 py-3 flex-1">
+                  <p className="text-yellow-400 text-3xl font-bold text-center">1775 VP</p>
+                </div>
+                <button className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-3 rounded-lg font-bold transition-all transform hover:scale-105">
+                  Acheter Maintenant
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />

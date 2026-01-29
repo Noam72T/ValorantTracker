@@ -37,7 +37,7 @@ export const Locker = () => {
       ]);
 
       setAllSkins(skinsData.skins);
-      setFavorites(new Set(favsData.map(f => f.skinId)));
+      setFavorites(new Set(favsData.map((f: any) => f.skinId)));
     } catch (error) {
       console.error('Erreur chargement casier:', error);
     } finally {
@@ -77,7 +77,7 @@ export const Locker = () => {
     try {
       if (favorites.has(skinId)) {
         const fav = await favoriteService.getFavorites();
-        const favToRemove = fav.find(f => f.skinId === skinId);
+        const favToRemove = fav.find((f: any) => f.skinId === skinId);
         if (favToRemove) {
           await favoriteService.removeFavorite(favToRemove.id);
           setFavorites(prev => {
@@ -120,10 +120,10 @@ export const Locker = () => {
   const selectedWeaponSkins = selectedWeapon ? weaponGroups[selectedWeapon] || [] : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-900 via-black to-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-900 flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>

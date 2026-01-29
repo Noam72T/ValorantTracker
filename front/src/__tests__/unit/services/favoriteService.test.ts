@@ -43,7 +43,7 @@ describe('FavoriteService - Tests Unitaires', () => {
 
       vi.mocked(api.post).mockResolvedValue(mockResponse);
 
-      const result = await favoriteService.addFavorite('skin-123', true);
+      const result = await favoriteService.addFavorite('skin-123');
 
       expect(api.post).toHaveBeenCalledWith('/favorites', {
         skinId: 'skin-123',
