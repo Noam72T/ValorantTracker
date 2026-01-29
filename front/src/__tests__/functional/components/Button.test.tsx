@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Button } from '../../../components/UI/Button';
+import { Button } from '@/components/UI/Button';
 
 describe('Button Component - Tests Fonctionnels', () => {
   it('devrait afficher le texte du bouton', () => {

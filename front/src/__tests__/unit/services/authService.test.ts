@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { authService } from '../../../services/authService';
-import api from '../../../services/api';
+import { authService } from '@/services/authService';
+import api from '@/services/api';
 
-vi.mock('../../../services/api');
+vi.mock('@/services/api');
 
 describe('AuthService - Tests Unitaires', () => {
   beforeEach(() => {

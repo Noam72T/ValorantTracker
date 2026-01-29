@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { favoriteService } from '../../../services/favoriteService';
-import api from '../../../services/api';
+import { favoriteService } from '@/services/favoriteService';
+import api from '@/services/api';
 
-vi.mock('../../../services/api');
+vi.mock('@/services/api');
 
 describe('FavoriteService - Tests Unitaires', () => {
   beforeEach(() => {
