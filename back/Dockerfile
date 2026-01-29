@@ -19,7 +19,7 @@ FROM base AS dev
 COPY package*.json ./
 
 # Installer toutes les dépendances (y compris dev)
-RUN npm ci
+RUN npm install
 
 # Copier le code source
 COPY . .
@@ -46,7 +46,7 @@ ENV PORT=3000
 COPY package*.json ./
 
 # Installer uniquement les dépendances de production
-RUN npm ci --only=production --ignore-scripts
+RUN npm install --only=production --ignore-scripts
 
 # Copier le code source
 COPY . .
